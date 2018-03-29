@@ -19,7 +19,7 @@ Then simply use `composer update`.
 How it works?
 -------------
 
-It simply turn this code:
+It simply turns this code:
 
 ```php
 namespace A;
