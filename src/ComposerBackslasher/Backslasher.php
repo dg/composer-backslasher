@@ -58,22 +58,25 @@ class Backslasher
 		$res = $prev1 = $prev2 = $prev3 = $pos = $enabled = null;
 
 		foreach ($tokens as $token) {
-			if ($token[0] === T_NAMESPACE) {
+			if ($token[0] === T_WHITESPACE) {
+
+			} elseif ($token[0] === T_NAMESPACE) {
 				$enabled = true;
 
-			} elseif ($enabled
-				&& $token[0] === T_STRING // constant
-				&& defined($token[1])
-				&& !preg_match('~true|false|null~i', $token[1])
-				&& $prev1[0] !== T_DOUBLE_COLON
-				&& $prev1[0] !== T_OBJECT_OPERATOR
-				&& $prev1[0] !== T_NS_SEPARATOR
+			} elseif ($enabled // constant
+				&& $token !== '='
+				&& $prev1[0] === T_STRING
+				&& defined($prev1[1])
+				&& !preg_match('~true|false|null~i', $prev1[1])
+				&& $prev2[0] !== T_DOUBLE_COLON
+				&& $prev2[0] !== T_OBJECT_OPERATOR
+				&& $prev2[0] !== T_NS_SEPARATOR
 			) {
-				$res .= '\\';
+				$res = substr_replace($res, '\\', $pos, 0);
 				$this->count++;
 
-			} elseif ($enabled
-				&& $token === '(' // function
+			} elseif ($enabled // function
+				&& $token === '('
 				&& $prev1[0] === T_STRING
 				&& function_exists($prev1[1])
 				&& $prev2[0] !== T_DOUBLE_COLON

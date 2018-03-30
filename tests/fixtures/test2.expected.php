@@ -23,3 +23,7 @@ func(Type :: PREG_SPLIT_NO_EMPTY);
 func($obj::PREG_SPLIT_NO_EMPTY);
 
 func($obj :: PREG_SPLIT_NO_EMPTY);
+
+const
+	PREG_SPLIT_NO_EMPTY = 1,
+	PREG_SPLIT_DELIM_CAPTURE = 2;
