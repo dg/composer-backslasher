@@ -9,6 +9,7 @@
 namespace DG\ComposerBackslasher;
 
 use Composer\IO\IOInterface;
+use PhpParser;
 
 
 class Backslasher
@@ -23,6 +24,10 @@ class Backslasher
 	public function __construct(IOInterface $io)
 	{
 		$this->io = $io;
+		$this->parser = (new PhpParser\ParserFactory)->create(
+			PhpParser\ParserFactory::PREFER_PHP7,
+			new PhpParser\Lexer(['usedAttributes' => ['startFilePos']])
+		);
 	}
 
 
@@ -54,61 +59,23 @@ class Backslasher
 	 */
 	public function processCode($code)
 	{
-		$tokens = token_get_all($code);
-		$res = $prev1 = $prev2 = $prev3 = $pos = $enabled = null;
-
-		foreach ($tokens as $token) {
-			if ($token[0] === T_WHITESPACE) {
-			} elseif ($token[0] === T_NAMESPACE) {
-				$enabled = true;
-
-			} elseif ($enabled // constant
-				&& $token !== '='
-				&& $token[0] !== T_DOUBLE_COLON
-				&& $prev1[0] === T_STRING
-				&& defined($prev1[1])
-				&& !preg_match('~true|false|null~i', $prev1[1])
-				&& $prev2[0] !== T_DOUBLE_COLON
-				&& $prev2[0] !== T_OBJECT_OPERATOR
-				&& $prev2[0] !== T_NS_SEPARATOR
-				&& $prev2[0] !== T_FUNCTION
-				&& $prev2[0] !== T_CLASS
-				&& $prev2[0] !== T_INTERFACE
-				&& $prev2[0] !== T_TRAIT
-				&& $prev2[0] !== T_EXTENDS
-				&& $prev2[0] !== T_IMPLEMENTS
-				&& $prev2[0] !== T_INSTANCEOF
-				&& $prev2[0] !== T_INSTEADOF
-				&& $prev2[0] !== T_AS
-				&& $prev2[0] !== T_NAMESPACE
-				&& $prev2[0] !== T_USE
-				&& $prev2[0] !== T_NEW
-				&& $prev2 !== '&'
-			) {
-				$res = substr_replace($res, '\\', $pos, 0);
-				$this->count++;
-
-			} elseif ($enabled // function
-				&& $token === '('
-				&& $prev1[0] === T_STRING
-				&& function_exists($prev1[1])
-				&& $prev2[0] !== T_DOUBLE_COLON
-				&& $prev2[0] !== T_OBJECT_OPERATOR
-				&& $prev2[0] !== T_FUNCTION
-				&& $prev3[0] !== T_FUNCTION
-				&& $prev2[0] !== T_NEW
-				&& $prev2[0] !== T_NS_SEPARATOR
-			) {
-				$res = substr_replace($res, '\\', $pos, 0);
-				$this->count++;
-			}
-
-			if ($token[0] !== T_WHITESPACE) {
-				list($prev3, $prev2, $prev1, $pos) = [$prev2, $prev1, $token, strlen($res)];
-			}
-
-			$res .= is_array($token) ? $token[1] : $token;
+		try {
+			$nodes = $this->parser->parse($code);
+		} catch (PhpParser\Error $e) {
+			$this->io->write("$file : {$e->getMessage()}", true, IOInterface::VERBOSE);
+			return $code;
 		}
-		return $res;
+
+		$collector = new Collector;
+		$traverser = new PhpParser\NodeTraverser;
+		$traverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
+		$traverser->addVisitor($collector);
+		$traverser->traverse($nodes);
+
+		foreach (array_reverse($collector->positions) as $pos) {
+			$code = substr_replace($code, '\\', $pos, 0);
+		}
+
+		return $code;
 	}
 }
