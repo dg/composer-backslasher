@@ -4,7 +4,8 @@ Composer Backslasher
 [![Downloads this Month](https://img.shields.io/packagist/dm/dg/composer-backslasher.svg)](https://packagist.org/packages/dg/composer-backslasher)
 [![Build Status](https://travis-ci.org/dg/composer-backslasher.svg?branch=master)](https://travis-ci.org/dg/composer-backslasher)
 
-Composer plugin that speeds up your application by adding backslashes to all PHP internal functions and constants.
+Composer plugin that speeds up your application by adding backslashes to all PHP internal functions and constants in `/vendor`.
+Does not modify files of your application.
 
 Installation
 ------------
