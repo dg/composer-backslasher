@@ -59,18 +59,31 @@ class Backslasher
 
 		foreach ($tokens as $token) {
 			if ($token[0] === T_WHITESPACE) {
-
 			} elseif ($token[0] === T_NAMESPACE) {
 				$enabled = true;
 
 			} elseif ($enabled // constant
 				&& $token !== '='
+				&& $token[0] !== T_DOUBLE_COLON
 				&& $prev1[0] === T_STRING
 				&& defined($prev1[1])
 				&& !preg_match('~true|false|null~i', $prev1[1])
 				&& $prev2[0] !== T_DOUBLE_COLON
 				&& $prev2[0] !== T_OBJECT_OPERATOR
 				&& $prev2[0] !== T_NS_SEPARATOR
+				&& $prev2[0] !== T_FUNCTION
+				&& $prev2[0] !== T_CLASS
+				&& $prev2[0] !== T_INTERFACE
+				&& $prev2[0] !== T_TRAIT
+				&& $prev2[0] !== T_EXTENDS
+				&& $prev2[0] !== T_IMPLEMENTS
+				&& $prev2[0] !== T_INSTANCEOF
+				&& $prev2[0] !== T_INSTEADOF
+				&& $prev2[0] !== T_AS
+				&& $prev2[0] !== T_NAMESPACE
+				&& $prev2[0] !== T_USE
+				&& $prev2[0] !== T_NEW
+				&& $prev2 !== '&'
 			) {
 				$res = substr_replace($res, '\\', $pos, 0);
 				$this->count++;
