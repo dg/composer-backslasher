@@ -41,3 +41,5 @@ if (\preg_match('/(foo)(bar)(baz)/', 'foobarbaz', $matches, \PREG_OFFSET_CAPTURE
 ```
 
 to avoid double lookup for global functions and constants.
+
+If you like it, **[please make a donation now](https://nette.org/make-donation?to=composer-backslasher)**. Thank you!
