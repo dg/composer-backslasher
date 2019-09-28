@@ -10,6 +10,6 @@ $backslasher = new DG\ComposerBackslasher\Backslasher($io);
 for ($i = 1; $i <= 4; $i++) {
 	Assert::matchFile(
 		__DIR__ . "/fixtures/test{$i}.expected.php",
-		$backslasher->processCode(file_get_contents(__DIR__ . "/fixtures/test{$i}.php"))
+		$backslasher->processCode(__DIR__ . "/fixtures/test{$i}.php", file_get_contents(__DIR__ . "/fixtures/test{$i}.php"))
 	);
 }
