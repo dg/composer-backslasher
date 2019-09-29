@@ -44,7 +44,7 @@ class Backslasher
 			}
 
 			$input = file_get_contents((string) $entry);
-			$output = $this->processCode($input);
+			$output = $this->processCode($input, (string) $entry);
 			if ($output !== $input) {
 				file_put_contents((string) $entry, $output);
 			}
@@ -57,7 +57,7 @@ class Backslasher
 	/**
 	 * @return string
 	 */
-	public function processCode($code)
+	public function processCode($code, $file = null)
 	{
 		try {
 			$nodes = $this->parser->parse($code);
