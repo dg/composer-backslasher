@@ -17,10 +17,14 @@ class Backslasher
 	/** @var IOInterface */
 	private $io;
 
+	/** @var array */
+	private $ignored;
 
-	public function __construct(IOInterface $io)
+
+	public function __construct(IOInterface $io, array $ignored = [])
 	{
 		$this->io = $io;
+		$this->ignored = array_flip($ignored);
 		$this->parser = (new PhpParser\ParserFactory)->create(
 			PhpParser\ParserFactory::PREFER_PHP7,
 			new PhpParser\Lexer(['usedAttributes' => ['startFilePos']])
@@ -65,6 +69,7 @@ class Backslasher
 		}
 
 		$collector = new Collector;
+		$collector->ignored = $this->ignored;
 		$traverser = new PhpParser\NodeTraverser;
 		$traverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
 		$traverser->addVisitor($collector);

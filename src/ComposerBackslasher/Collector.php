@@ -12,6 +12,9 @@ class Collector extends NodeVisitorAbstract
 	/** @var array */
 	public $positions = [];
 
+	/** @var array */
+	public $ignored = [];
+
 	/** @var bool */
 	private $inNamespace = false;
 
@@ -27,6 +30,7 @@ class Collector extends NodeVisitorAbstract
 			&& $node->name instanceof Node\Name
 			&& !$node->name instanceof Node\Name\FullyQualified
 			&& function_exists((string) $node->name)
+			&& !isset($this->ignored[(string) $node->name->getAttribute('namespacedName')])
 		) {
 			$this->positions[] = $node->name->getAttribute('startFilePos');
 
@@ -35,6 +39,7 @@ class Collector extends NodeVisitorAbstract
 			&& !$node->name instanceof Node\Name\FullyQualified
 			&& defined((string) $node->name)
 			&& !preg_match('~true|false|null~i', (string) $node->name)
+			&& !isset($this->ignored[(string) $node->name->getAttribute('namespacedName')])
 		) {
 			$this->positions[] = $node->name->getAttribute('startFilePos');
 		}

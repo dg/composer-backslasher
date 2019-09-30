@@ -42,4 +42,21 @@ if (\preg_match('/(foo)(bar)(baz)/', 'foobarbaz', $matches, \PREG_OFFSET_CAPTURE
 
 to avoid double lookup for global functions and constants.
 
+
+Configuration
+-------------
+
+If you want to ignore certain functions or constants, specify them in the configuration.
+Simply add a `extra > backslasher-ignore` section to `composer.json` file:
+
+```js
+{
+	"extra": {
+		"backslasher-ignore": [
+			"GuzzleHttp\\Promise\\each"
+		]
+	}
+}
+```
+
 If you like it, **[please make a donation now](https://nette.org/make-donation?to=composer-backslasher)**. Thank you!

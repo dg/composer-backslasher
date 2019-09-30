@@ -29,7 +29,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 	public function run(Event $event)
 	{
 		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
-		$backslasher = new Backslasher($event->getIO());
+		$extra = $event->getComposer()->getPackage()->getExtra();
+		$ignored = isset($extra['backslasher-ignore']) ? (array) $extra['backslasher-ignore'] : [];
+		$backslasher = new Backslasher($event->getIO(), $ignored);
 		$backslasher->processDir($vendorDir);
 	}
 }
