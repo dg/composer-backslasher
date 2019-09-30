@@ -17,9 +17,6 @@ class Backslasher
 	/** @var IOInterface */
 	private $io;
 
-	/** @var int */
-	private $count = 0;
-
 
 	public function __construct(IOInterface $io)
 	{
@@ -36,7 +33,7 @@ class Backslasher
 	 */
 	public function processDir($vendorDir)
 	{
-		$this->count = 0;
+		$count = 0;
 
 		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($vendorDir)) as $entry) {
 			if (!$entry->isFile() || $entry->getExtension() !== 'php') {
@@ -47,10 +44,11 @@ class Backslasher
 			$output = $this->processCode($input, (string) $entry);
 			if ($output !== $input) {
 				file_put_contents((string) $entry, $output);
+				$count += strlen($output) - strlen($input);
 			}
 		}
 
-		$this->io->write("Composer Backslasher: Added $this->count backslashes.");
+		$this->io->write("Composer Backslasher: Added $count backslashes.");
 	}
 
 
