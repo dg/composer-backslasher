@@ -59,4 +59,9 @@ Simply add a `extra > backslasher-ignore` section to `composer.json` file:
 }
 ```
 
-If you like it, **[please make a donation now](https://nette.org/make-donation?to=composer-backslasher)**. Thank you!
+Support Project
+---------------
+
+Do you like Composer Backslasher? Are you looking forward to the new features?
+
+[![Donate](https://files.nette.org/icons/donation-1.svg?)](https://nette.org/make-donation?to=composer-backslasher)
