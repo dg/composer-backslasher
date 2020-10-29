@@ -22,6 +22,10 @@
 	"autoload": {
 		"classmap": ["src/"]
 	},
+	"scripts": {
+		"phpstan": "phpstan analyse",
+		"tester": "tester tests -s"
+	},
 	"extra": {
 		"class": "DG\\ComposerBackslasher\\Plugin"
 	}
